@@ -49,6 +49,8 @@ setup(
             ['schema/' + x for x in os.listdir('schema')]),
         ('share/snapcraft/libraries',
             ['libraries/' + x for x in os.listdir('libraries')]),
+        ('share/snapcraft/custom_plugin',
+            ['custom_plugin/' + x for x in os.listdir('custom_plugin')]),
     ],
     install_requires=[
         'pyxdg',

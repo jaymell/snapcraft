@@ -152,7 +152,8 @@ from snapcraft.internal import lifecycle, log, parts
 from snapcraft.internal.common import (
     format_output_in_columns,
     get_terminal_width,
-    get_tourdir)
+    get_tourdir,
+    get_plugindir)
 from snapcraft.storeapi.constants import DEFAULT_SERIES
 
 
@@ -160,82 +161,30 @@ logger = logging.getLogger(__name__)
 _SNAPCRAFT_TOUR_DIR = "./snapcraft-tour/"
 
 
-def _build_plugin(plugin_name):
+def _init_plugin(plugin_name):
 
-    new_plugin_code = \
-        ('import snapcraft\n\n'
-         '\"\"\"\n'
-         'See http://snapcraft.io/docs/build-snaps/plugins\n'
-         '    for more information on creating custom plugins\n'
-         '\"\"\"\n\n'
-         'class {}(snapcraft.BasePlugin):\n\n'
-         '    @classmethod\n'
-         '    def schema(cls):\n'
-         '        \"\"\" This method defines the parameters passed to\n'
-         '            the plugin\n'
-         '        \"\"\"\n'
-         '        schema = super().schema()\n\n'
-         '        #\n'
-         '        # For example, the following code adds\n'
-         '        # "config-parameters" as a required property:\n'
-         '        #\n'
-         '        # schema["properties"]["config-parameters"] = {{\n'
-         '        #    "type": "array",\n'
-         '        #    "minitems": 1,\n'
-         '        #    "uniqueItems": True,\n'
-         '        #    "items": {{\n'
-         '        #        "type": "string",\n'
-         '        #    }},\n'
-         '        #    "default": [],\n'
-         '        # }}\n'
-         '        #\n'
-         '        # schema["required"].append("config-parameters")\n'
-         '        #\n\n'
-         '        return schema\n\n'
-         '    def build(self):\n'
-         '        \"\"\" This method controls the build process; override\n'
-         '            or extend it to replace or add custom functionality\n'
-         '        \"\"\"\n'
-         '        super().build()\n\n'
-         '        #\n'
-         '        # For example, the following code\n'
-         '        # runs a custom make-based install:\n'
-         '        #\n'
-         '        # config_command = ["./config"]\n'
-         '        # config_command.extend(self.options.config_parameters)\n'
-         '        # self.run(config_command)\n'
-         '        # self.run(["make"])\n'
-         '        # self.run(["make", "test"])\n'
-         '        # self.run(["make", "install"])\n'
-         '        #\n\n\n'
-         .format(plugin_name.title()))
+    with open(os.path.join(get_plugindir(), 'custom_plugin.py')) as f:
+        custom_plugin_code = f.read()
 
-    plugin_dir = os.path.join(os.getcwd(), 'parts', 'plugins')
+    custom_plugindir = os.path.join(os.getcwd(), 'parts', 'plugins')
 
     try:
-        os.makedirs(plugin_dir)
+        os.makedirs(custom_plugindir)
     except FileExistsError:
-        if not os.path.isdir(plugin_dir):
+        if not os.path.isdir(custom_plugindir):
             raise NotADirectoryError("{} is a file, can't be used as a "
-                                     "destination".format(plugin_dir))
+                                     "destination".format(custom_plugindir))
 
-    plugin_path = os.path.join(plugin_dir, 'x-{}.py'.format(plugin_name))
+    plugin_path = os.path.join(custom_plugindir, 'x-{}.py'.format(plugin_name))
 
     if os.path.exists(plugin_path):
         raise FileExistsError("{} already exists. Not overwriting"
                               .format(plugin_path))
 
     with open(plugin_path, 'w') as plugin_file:
-        plugin_file.write(new_plugin_code)
+        plugin_file.write(custom_plugin_code)
 
     logger.info("Created new plugin at {}".format(plugin_path))
-
-
-def _init_plugin(plugin_name):
-    if not plugin_name.isidentifier():
-        raise SyntaxError("Plugin name must be valid Python identifier")
-
-    _build_plugin(plugin_name)
 
 
 def _get_version():
