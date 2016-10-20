@@ -161,29 +161,24 @@ logger = logging.getLogger(__name__)
 _SNAPCRAFT_TOUR_DIR = "./snapcraft-tour/"
 _CUSTOM_PLUGINDIR = "./parts/plugins"
 
-def _init_plugin(plugin_name):
 
+def _init_plugin(plugin_name):
     with open(os.path.join(get_custom_plugindir(), 'custom_plugin.py')) as f:
         custom_plugin_code = f.read()
-
     custom_plugindir = _CUSTOM_PLUGINDIR
-
     try:
         os.makedirs(custom_plugindir)
     except FileExistsError:
         if not os.path.isdir(custom_plugindir):
             raise NotADirectoryError("{} is a file, can't be used as a "
                                      "destination".format(custom_plugindir))
-
-    custom_plugin_path = os.path.join(custom_plugindir, 'x-{}.py'.format(plugin_name))
-
+    custom_plugin_path = os.path.join(custom_plugindir,
+                                      'x-{}.py'.format(plugin_name))
     if os.path.exists(custom_plugin_path):
         raise FileExistsError("{} already exists. Not overwriting"
                               .format(custom_plugin_path))
-
     with open(custom_plugin_path, 'w') as custom_plugin_file:
         custom_plugin_file.write(custom_plugin_code)
-
     logger.info("Created new plugin at {}".format(custom_plugin_path))
 
 

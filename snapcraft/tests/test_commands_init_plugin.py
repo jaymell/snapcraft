@@ -22,22 +22,12 @@ from snapcraft.main import main
 from snapcraft import tests
 
 import fixtures
+from unittest import mock
 
 
 class InitPluginTestCase(tests.TestCase):
 
-    def test_init_plugin_invalid_name(self):
-        fake_logger = fixtures.FakeLogger(level=logging.ERROR)
-        self.useFixture(fake_logger)
-
-        with self.assertRaises(SystemExit) as raised:
-            main(['init-plugin', 'invalid-plugin'])
-
-        self.assertEqual(1, raised.exception.code)
-        self.assertEqual(
-          fake_logger.output,
-          "Plugin name must be valid Python identifier\n")
-
+    @mock.patch('snapcraft.main.get_custom_plugindir')
     def test_init_plugin_defaults(self):
         fake_logger = fixtures.FakeLogger(level=logging.ERROR)
         self.useFixture(fake_logger)
@@ -55,6 +45,7 @@ class InitPluginTestCase(tests.TestCase):
             fake_logger.output,
             "Created new plugin at {}\n".format(plugin_path))
 
+    @mock.patch('snapcraft.main.get_custom_plugindir')
     def test_plugin_compiles(self):
         fake_logger = fixtures.FakeLogger(level=logging.ERROR)
         self.useFixture(fake_logger)
@@ -72,6 +63,7 @@ class InitPluginTestCase(tests.TestCase):
                                               'plugins',
                                               '__pycache__')))
 
+    @mock.patch('snapcraft.main.get_custom_plugindir')
     def test_plugin_no_overwrite_existing(self):
         fake_logger = fixtures.FakeLogger(level=logging.ERROR)
         self.useFixture(fake_logger)
@@ -91,6 +83,7 @@ class InitPluginTestCase(tests.TestCase):
             "{} already exists. Not overwriting\n".format(plugin_path),
             fake_logger.output)
 
+    @mock.patch('snapcraft.main.get_custom_plugindir')
     def test_preexisting_file_fails(self):
         fake_logger = fixtures.FakeLogger(level=logging.ERROR)
         self.useFixture(fake_logger)
