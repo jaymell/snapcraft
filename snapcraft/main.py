@@ -153,20 +153,20 @@ from snapcraft.internal.common import (
     format_output_in_columns,
     get_terminal_width,
     get_tourdir,
-    get_plugindir)
+    get_custom_plugindir)
 from snapcraft.storeapi.constants import DEFAULT_SERIES
 
 
 logger = logging.getLogger(__name__)
 _SNAPCRAFT_TOUR_DIR = "./snapcraft-tour/"
-
+_CUSTOM_PLUGINDIR = "./parts/plugins"
 
 def _init_plugin(plugin_name):
 
-    with open(os.path.join(get_plugindir(), 'custom_plugin.py')) as f:
+    with open(os.path.join(get_custom_plugindir(), 'custom_plugin.py')) as f:
         custom_plugin_code = f.read()
 
-    custom_plugindir = os.path.join(os.getcwd(), 'parts', 'plugins')
+    custom_plugindir = _CUSTOM_PLUGINDIR
 
     try:
         os.makedirs(custom_plugindir)
@@ -175,16 +175,16 @@ def _init_plugin(plugin_name):
             raise NotADirectoryError("{} is a file, can't be used as a "
                                      "destination".format(custom_plugindir))
 
-    plugin_path = os.path.join(custom_plugindir, 'x-{}.py'.format(plugin_name))
+    custom_plugin_path = os.path.join(custom_plugindir, 'x-{}.py'.format(plugin_name))
 
-    if os.path.exists(plugin_path):
+    if os.path.exists(custom_plugin_path):
         raise FileExistsError("{} already exists. Not overwriting"
-                              .format(plugin_path))
+                              .format(custom_plugin_path))
 
-    with open(plugin_path, 'w') as plugin_file:
-        plugin_file.write(custom_plugin_code)
+    with open(custom_plugin_path, 'w') as custom_plugin_file:
+        custom_plugin_file.write(custom_plugin_code)
 
-    logger.info("Created new plugin at {}".format(plugin_path))
+    logger.info("Created new plugin at {}".format(custom_plugin_path))
 
 
 def _get_version():

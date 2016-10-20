@@ -39,6 +39,8 @@ _DEFAULT_LIBRARIESDIR = '/usr/share/snapcraft/libraries'
 _librariesdir = _DEFAULT_LIBRARIESDIR
 _DEFAULT_TOURDIR = '/usr/share/snapcraft/tour'
 _tourdir = _DEFAULT_TOURDIR
+DEFAULT_CUSTOM_PLUGINDIR = '/usr/share/snapcraft/custom_plugin'
+_custom_plugindir = DEFAULT_CUSTOM_PLUGINDIR
 
 MAX_CHARACTERS_WRAP = 120
 
@@ -90,6 +92,15 @@ def format_snap_name(snap):
         snap['arch'] = 'multi'
 
     return '{name}_{version}_{arch}.snap'.format(**snap)
+
+
+def set_custom_plugindir(custom_plugindir):
+    global _custom_plugindir
+    _custom_plugindir = custom_plugindir
+
+
+def get_custom_plugindir():
+    return _custom_plugindir
 
 
 def set_plugindir(plugindir):
