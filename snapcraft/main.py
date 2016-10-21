@@ -165,7 +165,7 @@ _CUSTOM_PLUGINDIR = "./parts/plugins"
 def _init_plugin(plugin_name):
     with open(os.path.join(get_custom_plugindir(), 'custom_plugin.py')) as f:
         custom_plugin_code = f.read()
-    custom_plugindir = _CUSTOM_PLUGINDIR
+    custom_plugindir = os.path.abspath(_CUSTOM_PLUGINDIR)
     try:
         os.makedirs(custom_plugindir)
     except FileExistsError:

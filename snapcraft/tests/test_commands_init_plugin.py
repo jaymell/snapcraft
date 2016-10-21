@@ -28,7 +28,12 @@ from unittest import mock
 class InitPluginTestCase(tests.TestCase):
 
     @mock.patch('snapcraft.main.get_custom_plugindir')
-    def test_init_plugin_defaults(self):
+    def test_init_plugin_defaults(self, mock_get_custom_plugindir):
+        mock_get_custom_plugindir.return_value = \
+            os.path.join(os.path.dirname(__file__),
+                         '..',
+                         '..',
+                         'custom_plugin')
         fake_logger = fixtures.FakeLogger(level=logging.ERROR)
         self.useFixture(fake_logger)
 
@@ -39,14 +44,19 @@ class InitPluginTestCase(tests.TestCase):
                                    'x-testplugin.py')
 
         self.assertTrue(os.path.exists(plugin_path),
-                        'Expected "parts/plugins/x-testplugin.py" to exist')
+                        'Expected "./parts/plugins/x-testplugin.py" to exist')
 
         self.assertEqual(
             fake_logger.output,
             "Created new plugin at {}\n".format(plugin_path))
 
     @mock.patch('snapcraft.main.get_custom_plugindir')
-    def test_plugin_compiles(self):
+    def test_plugin_compiles(self, mock_get_custom_plugindir):
+        mock_get_custom_plugindir.return_value = \
+            os.path.join(os.path.dirname(__file__),
+                         '..',
+                         '..',
+                         'custom_plugin')
         fake_logger = fixtures.FakeLogger(level=logging.ERROR)
         self.useFixture(fake_logger)
 
@@ -64,7 +74,12 @@ class InitPluginTestCase(tests.TestCase):
                                               '__pycache__')))
 
     @mock.patch('snapcraft.main.get_custom_plugindir')
-    def test_plugin_no_overwrite_existing(self):
+    def test_plugin_no_overwrite_existing(self, mock_get_custom_plugindir):
+        mock_get_custom_plugindir.return_value = \
+            os.path.join(os.path.dirname(__file__),
+                         '..',
+                         '..',
+                         'custom_plugin')
         fake_logger = fixtures.FakeLogger(level=logging.ERROR)
         self.useFixture(fake_logger)
 
@@ -84,7 +99,12 @@ class InitPluginTestCase(tests.TestCase):
             fake_logger.output)
 
     @mock.patch('snapcraft.main.get_custom_plugindir')
-    def test_preexisting_file_fails(self):
+    def test_preexisting_file_fails(self, mock_get_custom_plugindir):
+        mock_get_custom_plugindir.return_value = \
+            os.path.join(os.path.dirname(__file__),
+                         '..',
+                         '..',
+                         'custom_plugin')
         fake_logger = fixtures.FakeLogger(level=logging.ERROR)
         self.useFixture(fake_logger)
 
